@@ -175,7 +175,30 @@ To make a prediction with a decision tree, we start at the root node and follow 
 
 #### 3.3.3 Naive Bayes Classifier
 
+Naive Bayes is a simple probabilistic classifier based on Bayes’ theorem with a naive independence assumption between features. In plain words: for a new case we check how well its feature values “fit” each class, multiply those fits together (we actually add logs), and pick the class with the highest score.
 
+**Idea**:  
+- Compute how common each class is in the data (class prior).  
+- For each feature value, compute how often it appears inside each class (conditional probability).  
+- At prediction time, combine the prior and all conditionals for a class; choose the largest.  
+
+In our project (all features are categorical):  
+- Features: `age_group`, `disease_name`, `astigmatic`, `tear_rate`.  
+- We estimate probabilities from counts.  
+- Use Laplace smoothing (add 1 to counts) so we never get zero probability.  
+- If a value didn’t appear in training, use a small fallback probability.  
+
+Training:
+1. Prior: `P(class) = count(class) / total_rows.`
+2. Conditional: for each feature `A` and value `v` inside class `C`
+    `P(A=v | C) = (count(A=v and C) + 1) / (count(C) + |V_A|)`
+    where `|V_A|` is the number of distinct values of `A`.
+
+Prediction:
+1. For each class `C`, compute the log-score: `score(C) = log P(C) + Σ log P(value_j | C)`
+2. Return the class with the highest score.
+
+This model is fast, easy to implement, and robust on small datasets. It works naturally with categorical data and gives transparent, explainable results. But it has its limitations for example it assumes features are independent given the class (often not fully true). Also if there are strong interactions between features, tree-based models can perform better.  
 
 ---
 

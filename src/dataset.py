@@ -18,11 +18,11 @@ import pandas as pd
 from datetime import date, timedelta
 from pathlib import Path
 
-from models import AgeGroup, Disease, TearRate, LensType
+from models import Disease, TearRate, LensType
 from database_manager import DatabaseManager
 
 
-def choose_lens(age: AgeGroup, disease: Disease, astig: bool, tear: TearRate) -> LensType:
+def choose_lens(disease: Disease, astig: bool, tear: TearRate) -> LensType:
     if tear == TearRate.REDUCED:
         return LensType.NONE
     if disease == Disease.MYOPE and astig:
@@ -48,21 +48,28 @@ def insert_data(db: DatabaseManager, records_num: int, delete_before_insert: boo
             patient = random.choice(patients)
             doctor = random.choice(doctors)
             disease = random.choice(list(Disease))
-            astig = random.choice([True, False])
+            if disease == Disease.ASTIGMATIC:
+                astigmatic = True
+            else:
+                astigmatic = random.random() < 0.3
             tear = random.choice(list(TearRate))
             
-            age_value = db.get_patient_age_group(patient)
-            if age_value and age_value in [a.value for a in AgeGroup]:
-                age = AgeGroup(age_value)
-            else:
-                age = random.choice(list(AgeGroup))
-            
-            lens = choose_lens(age, disease, astig, tear)
+            lens = choose_lens(disease, astigmatic, tear)
             disease_id = disease_map[disease.value]
             exam_date = base_date + timedelta(days=i)
 
-            db.insert_examination_record(exam_date, astig, tear.value, lens.value, patient, doctor, disease_id)
-
+            db.insert_examination_record(
+                exam_date,
+                astigmatic,
+                tear.value,
+                lens.value,
+                patient,
+                doctor,
+                disease_id
+            )
+        
+        if db.conn:
+            db.conn.commit()
         print(f"[OK] Generated {records_num} records for table examination.")
 
     except Exception as e:
@@ -90,8 +97,8 @@ def orange_export_to_csv(db: DatabaseManager, output_file: Path, sql_create_view
         print("[ERROR] Something went wrong:")
         print(e)
 
-def r1_export_to_csv(db: DatabaseManager, sql_create_view_query: Path, dataset_table: str, output_file: Path) -> Path:
-    print("[INFO] Exporting dataset for R1 model training...")
+def export_to_csv(db: DatabaseManager, sql_create_view_query: Path, dataset_table: str, output_file: Path) -> Path:
+    print("[INFO] Exporting dataset for model training...")
     db.refresh_views(sql_create_view_query)
     rows = db.get_dataset_rows(dataset_table)
 

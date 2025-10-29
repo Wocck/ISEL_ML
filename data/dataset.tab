@@ -1,6 +1,4 @@
 age_group	disease_name	astigmatic	tear_rate	lenses
-d	d	d	d	d
-				class
 presbyopic	myope	yes	reduced	none
 young	myope	no	reduced	none
 pre-presbyopic	myope	no	reduced	none

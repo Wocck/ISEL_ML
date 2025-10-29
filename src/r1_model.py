@@ -19,7 +19,6 @@ class OneRClassifier:
                 df[c] = df[c].map({True: "yes", False: "no"})
         for c in df.columns:
             df[c] = df[c].astype(str).str.strip()
-        df = df.fillna("UNKNOWN")
         if target_col not in df.columns:
             raise ValueError(f"Brak kolumny docelowej '{target_col}' w danych.")
         return df

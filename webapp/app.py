@@ -4,15 +4,21 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 
-from scripts.r1_model import OneRClassifier
-from scripts.id3_model import predict_id3
-from scripts.naive_bayes_model import predict_nb
+from src.r1_model import OneRClassifier
+from src.id3_model import ID3Classifier
+from src.naive_bayes_model import NaiveBayesClassifier
 
 app = FastAPI()
 templates = Jinja2Templates(directory="webapp/templates")
 
-model_1r = OneRClassifier(Path("data/r1_dataset.tab"))
+DATA_FILE = Path("data/dataset.tab")
+model_1r = OneRClassifier(DATA_FILE)
 model_1r.fit("lenses")
+model_id3 = ID3Classifier(DATA_FILE)
+model_id3.fit("lenses")
+model_naive_bayes = NaiveBayesClassifier(DATA_FILE)
+model_naive_bayes.fit("lenses")
+
 
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
@@ -32,8 +38,8 @@ def predict(
     if model == "1r":
         result = model_1r.predict_from_values(age_group, disease_name, astigmatic_bool, tear_rate)
     elif model == "id3":
-        result = predict_id3(age_group, disease_name, astigmatic_bool, tear_rate)
+        result = model_id3.predict_from_values(age_group, disease_name, astigmatic_bool, tear_rate)
     else:
-        result = predict_nb(age_group, disease_name, astigmatic_bool, tear_rate)
+        result = model_naive_bayes.predict_from_values(age_group, disease_name, astigmatic_bool, tear_rate)
 
     return templates.TemplateResponse("index.html", {"request": request, "prediction": result})

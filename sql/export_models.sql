@@ -1,8 +1,8 @@
 -- ==================================================
--- R1 .TAB EXPORT VIEW
+-- TAB EXPORT VIEW
 -- ==================================================
 
-CREATE OR REPLACE VIEW r1_dataset AS
+CREATE OR REPLACE VIEW models_dataset AS
 SELECT
     p.age_group::TEXT AS age_group,
     d.disease_name::TEXT AS disease_name,

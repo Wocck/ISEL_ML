@@ -57,3 +57,5 @@ python scripts/main.py
 .venv\Scripts\activate
 uvicorn webapp.app:app --reload
 ```
+
+Webapp will be available under ` http://127.0.0.1:8000`

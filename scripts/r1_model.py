@@ -1,0 +1,112 @@
+import pandas as pd
+from tqdm import tqdm
+from pathlib import Path
+
+class OneRClassifier:
+    def __init__(self, dataset_file: Path):
+        self.best_attribute = None
+        self.rules = {}
+        self.default_class = None
+        self.target_col = None
+        self.fitted = False
+        self.df = pd.read_csv(dataset_file, sep="\t")
+    
+    @staticmethod
+    def _normalize_df(df: pd.DataFrame, target_col: str) -> pd.DataFrame:
+        df = df.copy()
+        for c in df.columns:
+            if df[c].dtype == bool:
+                df[c] = df[c].map({True: "yes", False: "no"})
+        for c in df.columns:
+            df[c] = df[c].astype(str).str.strip()
+        df = df.fillna("UNKNOWN")
+        if target_col not in df.columns:
+            raise ValueError(f"Brak kolumny docelowej '{target_col}' w danych.")
+        return df
+
+    def _build_rules_for_attribute(self, attr, target_col):
+        counts = (
+            self.df.groupby([attr, target_col])
+              .size()
+              .reset_index(name='count')
+        )
+        rules = {}
+        for value in counts[attr].unique():
+            subset = counts[counts[attr] == value]
+            majority_row = subset.loc[subset['count'].idxmax()]
+            rules[value] = majority_row[target_col]
+
+        predictions = self.df[attr].map(rules)
+        accuracy = (predictions == self.df[target_col]).mean()
+        return rules, accuracy
+
+    def fit(self, target_col):
+        self.df = self._normalize_df(self.df, target_col)
+        self.target_col = target_col
+
+        candidate_attributes = [c for c in self.df.columns if c != target_col]
+        best_attr_local = None
+        best_rules_local = None
+        best_acc_local = -1.0
+
+        for attr in tqdm(candidate_attributes, desc="Training atr", unit="atr"):
+            rules_attr, acc_attr = self._build_rules_for_attribute(attr, target_col)
+            if acc_attr > best_acc_local:
+                best_acc_local = acc_attr
+                best_attr_local = attr
+                best_rules_local = rules_attr
+
+        self.best_attribute = best_attr_local
+        self.rules = best_rules_local
+        self.default_class = self.df[target_col].value_counts().idxmax()
+        self.fitted = True
+
+    def predict_row(self, row):
+        if not self.fitted:
+            raise RuntimeError("Model was not trained. Use fit() first.")
+        attr_value = str(row[self.best_attribute]).strip()
+        if self.rules:
+            return self.rules.get(attr_value, self.default_class)
+        else:
+            print("[Error] This should not happen!!!")
+
+    def predict(self):
+        df = self.df.copy()
+        for c in df.columns:
+            df[c] = df[c].astype(str).str.strip()
+        return [self.predict_row(df.iloc[i]) for i in range(len(df))]
+
+    def predict_from_values(self, age_group, disease_name, astigmatic, tear_rate):
+        row = {
+            "age_group": str(age_group).strip(),
+            "disease_name": str(disease_name).strip(),
+            "astigmatic": "yes" if astigmatic else "no",
+            "tear_rate": str(tear_rate).strip()
+        }
+        if self.rules and self.best_attribute:
+            return self.rules.get(row[self.best_attribute], self.default_class)
+        else:
+            print("[Error] This should not happen!!")
+
+    def score(self):
+        df = self.df.copy()
+        for c in df.columns:
+            df[c] = df[c].astype(str).str.strip()
+        preds = self.predict()
+        real = df[self.target_col].tolist()
+        total = len(real)
+        if total == 0:
+            return 0.0
+        correct = sum(1 for p, r in zip(preds, real) if p == r)
+        return correct / total
+
+    def pretty_print_rules(self):
+        if not self.fitted:
+            print("Model not trained.")
+            return
+        print("1R model on atr:", self.best_attribute)
+        if self.rules:
+            for attr_val, cls in self.rules.items():
+                print(f"  IF {self.best_attribute} == {attr_val} THEN {self.target_col} = {cls}")
+        print(f"  ELSE {self.target_col} = {self.default_class}  (default)")
+        print()

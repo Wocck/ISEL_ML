@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MedKnow Lens Decision Support</title>
+</head>
+<body>
+    <h2>MedKnow - Lens Recommendation</h2>
+
+    <form action="/predict" method="post">
+        <label>Model:</label><br>
+        <input type="radio" name="model" value="1r" checked> One Rule (1R)<br>
+        <input type="radio" name="model" value="id3"> ID3 (not implemented)<br>
+        <input type="radio" name="model" value="nb"> Naive Bayes (not implemented)<br><br>
+
+        <label>Age group:</label><br>
+        <input type="text" name="age_group" placeholder="young"><br><br>
+
+        <label>Disease:</label><br>
+        <input type="text" name="disease_name" placeholder="myope"><br><br>
+
+        <label>Astigmatic:</label><br>
+        <input type="text" name="astigmatic" placeholder="yes/no"><br><br>
+
+        <label>Tear rate:</label><br>
+        <input type="text" name="tear_rate" placeholder="normal"><br><br>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    {% if prediction %}
+    <h3>Recommended lenses: {{ prediction }}</h3>
+    {% endif %}
+</body>
+</html>

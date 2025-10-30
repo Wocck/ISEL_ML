@@ -35,7 +35,7 @@ train_df, test_df = train_test_split(df, test_size=0.2, shuffle=True, random_sta
 
 def run_r1_model():
     r1_model = OneRClassifier()
-    r1_model.set_training_data(test_df)
+    r1_model.set_training_data(train_df)
     r1_model.fit(target_col="lenses")
     print()
     print("=====================================")
@@ -48,7 +48,7 @@ def run_r1_model():
 
 def run_id3_model():
     id3_model = ID3Classifier()
-    id3_model.set_training_data(test_df)
+    id3_model.set_training_data(train_df)
     id3_model.fit("lenses")
     print()
     print("======================================")
@@ -61,7 +61,7 @@ def run_id3_model():
 
 def run_naive_bayes_model():
     naive_bayes_model = NaiveBayesClassifier()
-    naive_bayes_model.set_training_data(test_df)
+    naive_bayes_model.set_training_data(train_df)
     naive_bayes_model.fit("lenses")
     print()
     print("======================================")

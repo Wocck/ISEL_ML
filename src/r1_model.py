@@ -9,10 +9,14 @@ class OneRClassifier:
         self.default_class = None
         self.target_col = None
         self.fitted = False
-        self.df = pd.read_csv(dataset_file, sep="\t")
-    
+        self.df = None
+
+    def set_training_data(self, df: pd.DataFrame):
+        self.df = df.copy()
+
     @staticmethod
     def _normalize_df(df: pd.DataFrame, target_col: str) -> pd.DataFrame:
+        # norm everything as string
         df = df.copy()
         for c in df.columns:
             if df[c].dtype == bool:
@@ -24,6 +28,8 @@ class OneRClassifier:
         return df
 
     def _build_rules_for_attribute(self, attr, target_col):
+        if self.df is None:
+            raise RuntimeError("Model has no data loaded. Use set_training_data() first!")
         counts = (
             self.df.groupby([attr, target_col])
               .size()
@@ -40,6 +46,8 @@ class OneRClassifier:
         return rules, accuracy
 
     def fit(self, target_col):
+        if self.df is None:
+            raise RuntimeError("Model has no data loaded. Use set_training_data() first!")
         self.df = self._normalize_df(self.df, target_col)
         self.target_col = target_col
 
@@ -70,6 +78,8 @@ class OneRClassifier:
             print("[Error] This should not happen!!!")
 
     def predict(self):
+        if self.df is None:
+            raise RuntimeError("Model has no data loaded. Use set_training_data() first!")
         df = self.df.copy()
         for c in df.columns:
             df[c] = df[c].astype(str).str.strip()
@@ -88,6 +98,8 @@ class OneRClassifier:
             print("[Error] This should not happen!!")
 
     def score(self):
+        if self.df is None:
+            raise RuntimeError("Model has no data loaded. Use set_training_data() first!")
         df = self.df.copy()
         for c in df.columns:
             df[c] = df[c].astype(str).str.strip()

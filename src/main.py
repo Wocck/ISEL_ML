@@ -1,4 +1,6 @@
+import pandas as pd
 from pathlib import Path
+from sklearn.model_selection import train_test_split
 
 from dataset import insert_data, orange_export_to_csv, export_to_csv
 from models import DatabaseConfig
@@ -27,9 +29,13 @@ TAB_DATASET_FILE = BASE_DIR / "data" / "dataset.tab"
 MODELS_SQL_CREATE_DATASET_VIEW = BASE_DIR / "sql" / "export_models.sql"
 MODELS_DATASET_TABLE = "models_dataset"
 
+df = pd.read_csv(TAB_DATASET_FILE, sep="\t")
+train_df, test_df = train_test_split(df, test_size=0.2, shuffle=True, random_state=42)
+
 
 def run_r1_model():
     r1_model = OneRClassifier(TAB_DATASET_FILE)
+    r1_model.set_training_data(test_df)
     r1_model.fit(target_col="lenses")
     print()
     print("=====================================")
@@ -40,6 +46,7 @@ def run_r1_model():
 
 def run_id3_model():
     id3_model = ID3Classifier(TAB_DATASET_FILE)
+    id3_model.set_training_data(test_df)
     id3_model.fit("lenses")
     print()
     print("======================================")
@@ -50,6 +57,7 @@ def run_id3_model():
 
 def run_naive_bayes_model():
     naive_bayes_model = NaiveBayesClassifier(TAB_DATASET_FILE)
+    naive_bayes_model.set_training_data(test_df)
     naive_bayes_model.fit("lenses")
     print()
     print("======================================")

@@ -4,15 +4,19 @@ from pathlib import Path
 
 class NaiveBayesClassifier:
     def __init__(self, dataset_file: Path):
-        self.df = pd.read_csv(dataset_file, sep="\t")
         self.target_col = None
         self.class_priors = {}
         self.cond_probs = {}
         self.default_class = None
         self.fitted = False
+        self.df = None
+
+    def set_training_data(self, df: pd.DataFrame):
+        self.df = df.copy()
 
     @staticmethod
     def _normalize_df(df: pd.DataFrame, target_col: str) -> pd.DataFrame:
+        # norm everything as string
         df = df.copy()
         for c in df.columns:
             df[c] = df[c].astype(str).str.strip()
@@ -21,6 +25,9 @@ class NaiveBayesClassifier:
         return df
 
     def fit(self, target_col: str):
+        if self.df is None:
+            raise RuntimeError("Model has no data loaded. Use set_training_data() first!")
+        
         self.df = self._normalize_df(self.df, target_col)
         self.target_col = target_col
 
@@ -106,10 +113,13 @@ class NaiveBayesClassifier:
         return self._predict_single_rowdict(row)
 
     def score(self):
+        if self.df is None:
+            raise RuntimeError("Model has no data loaded. Use set_training_data() first!")
         if not self.fitted:
             raise RuntimeError("Model Naive Bayes was not trained. Use fit() first!")
         if self.target_col is None:
             raise ValueError("No target column found. Use fit() first!")
+        
         correct = 0
         total = len(self.df)
 

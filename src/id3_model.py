@@ -5,11 +5,14 @@ from typing import Optional, Any
 
 class ID3Classifier:
     def __init__(self, dataset_file: Path):
-        self.df = pd.read_csv(dataset_file, sep="\t")
         self.target_col = None
         self.tree = None
         self.default_class = None
         self.fitted = False
+        self.df = None
+
+    def set_training_data(self, df: pd.DataFrame):
+        self.df = df.copy()
 
     @staticmethod
     def _normalize_df(df: pd.DataFrame, target_col: str) -> pd.DataFrame:
@@ -91,6 +94,9 @@ class ID3Classifier:
         return node
 
     def fit(self, target_col: str):
+        if self.df is None:
+            raise RuntimeError("Model has no data loaded. Use set_training_data() first!")
+        
         self.df = self._normalize_df(self.df, target_col)
         self.target_col = target_col
 
@@ -127,6 +133,9 @@ class ID3Classifier:
         return self._predict_row_from_tree(row, self.tree)
 
     def predict_all_training(self):
+        if self.df is None:
+            raise RuntimeError("Model has no data loaded. Use set_training_data() first!")
+
         if not self.fitted or self.tree is None:
             raise RuntimeError("Model ID3 was not trained. Use fit() first!")
         
@@ -143,6 +152,8 @@ class ID3Classifier:
         return preds
 
     def score(self):
+        if self.df is None:
+            raise RuntimeError("Model has no data loaded. Use set_training_data() first!")
         if not self.fitted:
             raise RuntimeError("Model ID3 was not trained. Use fit() first!")
 

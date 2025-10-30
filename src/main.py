@@ -42,7 +42,9 @@ def run_r1_model():
     print("======== One Rule Classifier ========")
     print("=====================================")
     r1_model.pretty_print_rules()
-    print("Accuracy:", round(r1_model.score() * 100, 2), "%")
+    print("Train Accuracy:", round(r1_model.score() * 100, 2), "%")
+    test_acc = evaluate_on_test(r1_model, test_df, "lenses")
+    print("Test Accuracy:", round(test_acc * 100, 2), "%")
 
 def run_id3_model():
     id3_model = ID3Classifier()
@@ -52,7 +54,9 @@ def run_id3_model():
     print("======================================")
     print("========== ID3 Classifier ============")
     print("======================================")
-    print("Accuracy:", round(id3_model.score() * 100, 2), "%")
+    print("Train Accuracy:", round(id3_model.score() * 100, 2), "%")
+    test_acc = evaluate_on_test(id3_model, test_df, "lenses")
+    print("Test Accuracy:", round(test_acc * 100, 2), "%")
     id3_model.print_tree()
 
 def run_naive_bayes_model():
@@ -63,8 +67,9 @@ def run_naive_bayes_model():
     print("======================================")
     print("======= Naive Bayes Classifier =======")
     print("======================================")
-    print("Accuracy:", round(naive_bayes_model.score() * 100, 2), "%")
-    
+    print("Train Accuracy:", round(naive_bayes_model.score() * 100, 2), "%")
+    test_acc = evaluate_on_test(naive_bayes_model, test_df, "lenses")
+    print("Test Accuracy:", round(test_acc * 100, 2), "%")
 
 def main():
     database_manager = DatabaseManager(config=db_config)
@@ -102,3 +107,20 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def evaluate_on_test(model, test_df, target_col):
+    test_df = test_df.copy()
+
+    # norm as string
+    for c in test_df.columns:
+        test_df[c] = test_df[c].astype(str).str.strip()
+
+    preds = []
+    real = test_df[target_col].tolist()
+
+    for i in range(len(test_df)):
+        preds.append(model.predict_row(test_df.iloc[i]))
+
+    correct = sum(1 for p, r in zip(preds, real) if p == r)
+    return correct / len(real)

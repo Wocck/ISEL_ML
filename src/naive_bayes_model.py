@@ -1,9 +1,8 @@
 import pandas as pd
 import math
-from pathlib import Path
 
 class NaiveBayesClassifier:
-    def __init__(self, dataset_file: Path):
+    def __init__(self):
         self.target_col = None
         self.class_priors = {}
         self.cond_probs = {}

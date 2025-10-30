@@ -1,10 +1,9 @@
 import pandas as pd
 import math
-from pathlib import Path
 from typing import Optional, Any
 
 class ID3Classifier:
-    def __init__(self, dataset_file: Path):
+    def __init__(self):
         self.target_col = None
         self.tree = None
         self.default_class = None

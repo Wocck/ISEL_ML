@@ -34,7 +34,7 @@ train_df, test_df = train_test_split(df, test_size=0.2, shuffle=True, random_sta
 
 
 def run_r1_model():
-    r1_model = OneRClassifier(TAB_DATASET_FILE)
+    r1_model = OneRClassifier()
     r1_model.set_training_data(test_df)
     r1_model.fit(target_col="lenses")
     print()
@@ -45,7 +45,7 @@ def run_r1_model():
     print("Accuracy:", round(r1_model.score() * 100, 2), "%")
 
 def run_id3_model():
-    id3_model = ID3Classifier(TAB_DATASET_FILE)
+    id3_model = ID3Classifier()
     id3_model.set_training_data(test_df)
     id3_model.fit("lenses")
     print()
@@ -56,7 +56,7 @@ def run_id3_model():
     id3_model.print_tree()
 
 def run_naive_bayes_model():
-    naive_bayes_model = NaiveBayesClassifier(TAB_DATASET_FILE)
+    naive_bayes_model = NaiveBayesClassifier()
     naive_bayes_model.set_training_data(test_df)
     naive_bayes_model.fit("lenses")
     print()

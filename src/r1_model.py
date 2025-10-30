@@ -1,9 +1,8 @@
 import pandas as pd
 from tqdm import tqdm
-from pathlib import Path
 
 class OneRClassifier:
-    def __init__(self, dataset_file: Path):
+    def __init__(self):
         self.best_attribute = None
         self.rules = {}
         self.default_class = None

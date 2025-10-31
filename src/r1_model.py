@@ -1,6 +1,8 @@
 import pandas as pd
 from tqdm import tqdm
 
+from evaluation import evaluate_on_test
+
 class OneRClassifier:
     def __init__(self):
         self.best_attribute = None
@@ -84,18 +86,6 @@ class OneRClassifier:
             df[c] = df[c].astype(str).str.strip()
         return [self.predict_row(df.iloc[i]) for i in range(len(df))]
 
-    def predict_from_values(self, age_group, disease_name, astigmatic, tear_rate):
-        row = {
-            "age_group": str(age_group).strip(),
-            "disease_name": str(disease_name).strip(),
-            "astigmatic": "yes" if astigmatic else "no",
-            "tear_rate": str(tear_rate).strip()
-        }
-        if self.rules and self.best_attribute:
-            return self.rules.get(row[self.best_attribute], self.default_class)
-        else:
-            print("[Error] This should not happen!!")
-
     def score(self):
         if self.df is None:
             raise RuntimeError("Model has no data loaded. Use set_training_data() first!")
@@ -120,3 +110,18 @@ class OneRClassifier:
                 print(f"  IF {self.best_attribute} == {attr_val} THEN {self.target_col} = {cls}")
         print(f"  ELSE {self.target_col} = {self.default_class}  (default)")
         print()
+        
+    def run_evaluate(self, test_df):
+        print("\n===============================")
+        print(" Model: One Rule (1R)")
+        print("===============================")
+        print(f"Selected attribute: {self.best_attribute}")
+        print("Rules:")
+        if self.rules is not None:
+            for val, cls in self.rules.items():
+                print(f"  IF {self.best_attribute} = {val} → lenses = {cls}")
+        print(f"Default class: {self.default_class}\n")
+
+        print("Accuracy:")
+        print(f"  Train: {self.score()*100:.2f}%")
+        print(f"  Test:  {evaluate_on_test(self, test_df, 'lenses')*100:.2f}%")

@@ -18,8 +18,10 @@ import pandas as pd
 from datetime import date, timedelta
 from pathlib import Path
 
+
 from models import Disease, TearRate, LensType
 from database_manager import DatabaseManager
+
 
 
 def choose_lens(disease: Disease, astig: bool, tear: TearRate) -> LensType:

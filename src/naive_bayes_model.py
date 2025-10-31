@@ -1,6 +1,7 @@
 import pandas as pd
 import math
 
+from evaluation import evaluate_on_test
 class NaiveBayesClassifier:
     def __init__(self):
         self.target_col = None
@@ -102,14 +103,17 @@ class NaiveBayesClassifier:
 
         return str(best_class or self.default_class)
 
-    def predict_from_values(self, age_group, disease_name, astigmatic, tear_rate):
-        row = {
-            "age_group": str(age_group).strip(),
-            "disease_name": str(disease_name).strip(),
-            "astigmatic": "yes" if astigmatic else "no",
-            "tear_rate": str(tear_rate).strip()
+    def predict_row(self, row):
+        if not self.fitted:
+            raise RuntimeError("Model Naive Bayes was not trained. Use fit() first!")
+        rowdict = {
+            "age_group": str(row["age_group"]).strip(),
+            "disease_name": str(row["disease_name"]).strip(),
+            "astigmatic": str(row["astigmatic"]).strip(),
+            "tear_rate": str(row["tear_rate"]).strip(),
         }
-        return self._predict_single_rowdict(row)
+        return self._predict_single_rowdict(rowdict)
+
 
     def score(self):
         if self.df is None:
@@ -137,3 +141,11 @@ class NaiveBayesClassifier:
         if total == 0:
             return 0.0
         return correct / total
+
+    def run_evaluate(self, test_df):
+        print("\n===============================")
+        print(" Model: Naive Bayes")
+        print("===============================")
+        print("Accuracy:")
+        print(f"  Train: {self.score()*100:.2f}%")
+        print(f"  Test:  {evaluate_on_test(self, test_df, 'lenses')*100:.2f}%")

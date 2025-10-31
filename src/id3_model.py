@@ -2,6 +2,8 @@ import pandas as pd
 import math
 from typing import Optional, Any
 
+from evaluation import evaluate_on_test
+
 class ID3Classifier:
     def __init__(self):
         self.target_col = None
@@ -119,17 +121,16 @@ class ID3Classifier:
 
         return str(self.default_class)
 
-    def predict_from_values(self, age_group, disease_name, astigmatic, tear_rate):
+    def predict_row(self, row):
         if not self.fitted or self.tree is None:
             raise RuntimeError("Model ID3 was not trained. Use fit() first!")
-
-        row = {
-            "age_group": str(age_group).strip(),
-            "disease_name": str(disease_name).strip(),
-            "astigmatic": "yes" if astigmatic else "no",
-            "tear_rate": str(tear_rate).strip()
+        rowdict = {
+            "age_group": str(row["age_group"]).strip(),
+            "disease_name": str(row["disease_name"]).strip(),
+            "astigmatic": str(row["astigmatic"]).strip(),
+            "tear_rate": str(row["tear_rate"]).strip(),
         }
-        return self._predict_row_from_tree(row, self.tree)
+        return self._predict_row_from_tree(rowdict, self.tree)
 
     def predict_all_training(self):
         if self.df is None:
@@ -185,3 +186,14 @@ class ID3Classifier:
             for val, subtree in node.get("branches", {}).items():
                 print(indent + f"[{attr} == {val}]")
                 self.print_tree(subtree, indent + "  ")
+                
+    def run_evaluate(self, test_df):
+        print("\n===============================")
+        print(" Model: ID3 Decision Tree")
+        print("===============================")
+        print("Tree structure:")
+        self.print_tree()
+
+        print("\nAccuracy:")
+        print(f"  Train: {self.score()*100:.2f}%")
+        print(f"  Test:  {evaluate_on_test(self, test_df, 'lenses')*100:.2f}%")

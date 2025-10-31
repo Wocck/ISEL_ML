@@ -49,11 +49,25 @@ python -m venv .venv
 pip install fastapi uvicorn jinja2 pandas psycopg2
 ```
 
-2. With `uv`:
+2. With `uv` (Recomended):  
+
+**UV instalation:**
+```
+# On macOS and Linux.
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# On Windows.
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# With pip.
+pip install uv
+```  
+
+**Dependencies Instalation:**
 ```
 uv venv
 uv sync
-```
+```  
 
 ## Running project
 

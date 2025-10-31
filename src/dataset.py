@@ -93,14 +93,13 @@ def orange_export_to_csv(db: DatabaseManager, output_file: Path, sql_create_view
             for row in rows:
                 writer.writerow(row.values())
 
-        print(f"[OK] Dataset was exported to: {output_file}")
+        print(f"[OK] Dataset for Orange DataMining exported to: {output_file}")
 
     except Exception as e:
         print("[ERROR] Something went wrong:")
         print(e)
 
 def export_to_csv(db: DatabaseManager, sql_create_view_query: Path, dataset_table: str, output_file: Path) -> Path:
-    print("[INFO] Exporting dataset for model training...")
     db.refresh_views(sql_create_view_query)
     rows = db.get_dataset_rows(dataset_table)
 
@@ -112,5 +111,5 @@ def export_to_csv(db: DatabaseManager, sql_create_view_query: Path, dataset_tabl
     df = pd.DataFrame(rows)
     df.to_csv(output_file, sep="\t", index=False)
 
-    print(f"[OK] Dataset exported for model training: {output_file}")
+    print(f"[OK] Dataset for model training exported to: {output_file}")
     return output_file

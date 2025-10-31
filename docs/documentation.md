@@ -31,7 +31,9 @@ This dataset is small and categorical, which makes it suitable for **rule-based 
 
 ### 2.1 Conceptual Model (ER Diagram)
 
-![ER Diagram](../graphics/ER_diagram.png)
+<p align="center">
+    <img src="../graphics/ER_diagram.png" width="500">
+</p>
 
 The system considers the following main entities:
 - **PATIENT**
@@ -77,8 +79,9 @@ CREATE TABLE EXAMINATION (
     disease_id INT REFERENCES DISEASE(disease_id)
 );
 ```
-
-![Database Diagram](../graphics/db_diagram.png)
+<p align="center">
+    <img src="../graphics/db_diagram.png" width="500">
+</p>
 
 ---
 
@@ -204,4 +207,76 @@ This model is fast, easy to implement, and robust on small datasets. It works na
 
 ## 4. Conclusions
 
-### 4.1 Model Evaluation and Comparison
+### 4.1 Main run example
+
+```
+===============================
+ Model: One Rule (1R)
+===============================
+Selected attribute: tear_rate
+Rules:
+  IF tear_rate = normal → lenses = soft
+  IF tear_rate = reduced → lenses = none
+Default class: none
+
+Accuracy:
+  Train: 95.83%
+  Test:  93.33%
+
+
+===============================
+ Model: ID3 Decision Tree
+===============================
+Tree structure:
+[tear_rate == reduced]
+  -> none
+[tear_rate == normal]
+  [disease_name == myope]
+    [astigmatic == yes]
+      -> hard
+    [astigmatic == no]
+      -> soft
+  [disease_name == astigmatic]
+    -> soft
+  [disease_name == hypermetrope]
+    -> soft
+
+Accuracy:
+  Train: 100.00%
+  Test:  100.00%
+
+
+===============================
+ Model: Naive Bayes
+===============================
+Accuracy:
+  Train: 95.83%
+  Test:  93.33%
+
+
+===============================
+ 5-Fold Cross Validation Summary
+===============================
+Model          Mean Acc    Std Dev   Folds
+1R                0.953      0.007   0.967, 0.950, 0.950, 0.950, 0.950
+ID3               1.000      0.000   1.000, 1.000, 1.000, 1.000, 1.000
+NaiveBayes        0.953      0.007   0.967, 0.950, 0.950, 0.950, 0.950
+```
+
+### 4.2 Model Evaluation and Comparison
+The results show clear differences between the three classifiers that were tested: One Rule (1R), ID3 Decision Tree, and Naive Bayes.  
+
+The ID3 Decision Tree performed the best. It reached 100% accuracy on both the training and test sets, and also in the 5-fold cross-validation. This means that the patterns in the dataset are quite clear and the decision tree was able to learn them perfectly. The structure of the tree also matches the rules used to generate the data, which makes it easy to understand why the model made a given prediction.  
+
+The One Rule (1R) classifier created a very simple decision rule based on just one attribute (tear_rate). Even though it uses only one feature, it still achieved around 93–96% accuracy, which is surprisingly good. This shows that tear_rate is a very important indicator in determining the lens type.  
+
+The Naive Bayes model reached similar accuracy to 1R. However, because it assumes that all features are independent (which is not entirely true), it did not outperform the decision tree. Still, it is a stable and reliable method.  
+
+### 4.3 Summary
+
+To summarize:
+- ID3 is the most accurate model and also easy to interpret.  
+- 1R is very simple and still provides good results.  
+- Naive Bayes performs well, but not better than ID3.  
+
+In practical use, if we want the most accurate predictions and a clear explanation of decisions, ID3 is the best choice. If we prefer a very simple model that is easy to explain, 1R is a good option.  

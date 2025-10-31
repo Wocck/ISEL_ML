@@ -2,18 +2,17 @@
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from pathlib import Path
 import pandas as pd
 
 from src.r1_model import OneRClassifier
 from src.id3_model import ID3Classifier
 from src.naive_bayes_model import NaiveBayesClassifier
+from src.config import TAB_DATASET_FILE
 
 app = FastAPI()
 templates = Jinja2Templates(directory="webapp/templates")
 
-DATA_FILE = Path("data/dataset.tab")
-df = pd.read_csv(DATA_FILE, sep="\t")
+df = pd.read_csv(TAB_DATASET_FILE, sep="\t")
 
 model_1r = OneRClassifier()
 model_1r.set_training_data(df)

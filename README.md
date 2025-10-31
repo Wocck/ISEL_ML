@@ -1,29 +1,44 @@
 # Project A
 
+This project implements a classification system that predicts the type of contact lenses a patient should receive based on ophthalmological examination data.
+The models are trained on synthetic but medically consistent data, generated directly into a PostgreSQL database.
+
+Three machine learning models are implemented from scratch:  
+- `One Rule (1R)`  
+- `ID3 Decision Tree`  
+- `Naive Bayes Classifier`  
+
+The project also includes:  
+- Export of data for Orange Data Mining  
+- Model evaluation with train/test split and 5-fold cross validation  
+- A web interface (FastAPI) for testing predictions interactively  
+
 ## Structure
 
 ```bash
 Project_A/
-├── data/                      # Exported datasets (.tab)
-├── docs/                      # Additional documentation
-├── graphics/                  # ER diagram (draw.io + PNG)
-├── scripts/                   # Database logic and ML model implementations
-├── sql/                       # Schema creation, population, export views
-└── webapp/                    # FastAPI UI for model predictions
+├── data/                      # Generated datasets (.tab)
+├── docs/                      # Final report + documentation
+├── graphics/                  # ER diagram + database diagram
+├── scripts/                   # Python implementation of models + main runner
+│   ├── main.py                # Generates data, trains and evaluates models
+│   ├── r1_model.py            # One Rule classifier
+│   ├── id3_model.py           # ID3 Decision Tree classifier
+│   ├── naive_bayes_model.py   # Naive Bayes classifier
+│   ├── dataset.py             # Synthetic data generation and exports
+│   ├── evaluation.py          # Test accuracy + cross-validation utilities
+│   └── database_manager.py    # Database connector
+├── sql/                       # Schema creation & dataset export queries
+└── webapp/                    # FastAPI UI for predictions
+    ├── app.py
+    └── templates/index.html
+
 ```
-
-## Key components
-
-- `sql/*.sql`                   Database schema, constraints, population, dataset export
-- `scripts/main.py`             Generates dataset and trains the 1R model
-- `scripts/r1_model.py`         Custom implementation of the 1R classifier
-- `webapp/app.py`               Minimal FastAPI backend with prediction endpoint
-- `webapp/templates/index.html` Simple HTML form interface
 
 ## Requirements
 
 - `Python 3.11+`
-- `PostgreSQL` (database connection configured in scripts/main.py)
+- `PostgreSQL` - running locally or remotely (connection settings configured in scripts/main.py)
 
 **Install required dependencies:**
 1. With `pip`:

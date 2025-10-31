@@ -29,7 +29,7 @@ def summarize_cv(df, target_col="lenses", k=5):
         scores = stratified_kfold_scores(cls, df, target_col, k=k)
         print(f"{name:12s} {np.mean(scores):10.3f} {np.std(scores):10.3f}   {', '.join(f'{s:.3f}' for s in scores)}")
 
-def stratified_kfold_scores(model_cls, df, target_col, k=5, random_state=42):
+def stratified_kfold_scores(model_cls, df, target_col, k=5, random_state=None):
     skf = StratifiedKFold(n_splits=k, shuffle=True, random_state=random_state)
     y = df[target_col].astype(str).values
     X = df.reset_index(drop=True)

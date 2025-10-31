@@ -21,6 +21,7 @@ Project_A/
 ├── docs/                      # Final report + documentation
 ├── graphics/                  # ER diagram + database diagram
 ├── scripts/                   # Python implementation of models + main runner
+│   ├── config.py              # Path, Database, execution parameters configuration
 │   ├── main.py                # Generates data, trains and evaluates models
 │   ├── r1_model.py            # One Rule classifier
 │   ├── id3_model.py           # ID3 Decision Tree classifier
@@ -38,7 +39,7 @@ Project_A/
 ## Requirements
 
 - `Python 3.11+`
-- `PostgreSQL` - running locally or remotely (connection settings configured in scripts/main.py)
+- `PostgreSQL` - running locally or remotely (connection settings configured in scripts/config.py)
 
 **Install required dependencies:**
 1. With `pip`:
@@ -56,18 +57,39 @@ uv sync
 
 ## Running project
 
-1. **Generate Data and Train Model**
+### 1. Configure Databse
+
+Configure PostgreSQL database connection with `DB_CONFIG` variable in `scripts/config.py`:
+```python
+DB_CONFIG = DatabaseConfig(
+    db_name="Yours Database Name",
+    db_user="Yours User Name",
+    db_pass="Yours User Password",
+    db_host="Host",
+    db_port=5432    # default Postgres port
+)
+```
+
+### 2. Generate Data Train and evaluate Models
+
 This will:
-- Populate the database with sample records
-- Export datasets .tab
-- Train and display the 1R model + accuracy
+- Populate the database with sample records  
+- Export datasets .tab  
+- Train and evaluate all models (1R, ID3, Naive Bayes)  
+- Print rules / tree structure and accuracy results  
 
 ```bash
 .venv\Scripts\activate
 python scripts/main.py
 ```
 
-2. **Start Web Application**
+### 3. Models Deployment
+
+This will:
+- Launch a simple web interface for testing model predictions  
+- Allow entering patient attributes and selecting classifier  
+
+
 ```bash
 .venv\Scripts\activate
 uvicorn webapp.app:app --reload

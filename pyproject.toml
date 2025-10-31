@@ -11,6 +11,5 @@ dependencies = [
     "psycopg2>=2.9.11",
     "python-multipart>=0.0.20",
     "scikit-learn>=1.7.2",
-    "tqdm>=4.67.1",
     "uvicorn>=0.38.0",
 ]

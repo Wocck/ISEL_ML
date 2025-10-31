@@ -1,5 +1,4 @@
 import pandas as pd
-from tqdm import tqdm
 
 from evaluation import evaluate_on_test
 
@@ -57,7 +56,7 @@ class OneRClassifier:
         best_rules_local = None
         best_acc_local = -1.0
 
-        for attr in tqdm(candidate_attributes, desc="Training atr", unit="atr"):
+        for attr in candidate_attributes:
             rules_attr, acc_attr = self._build_rules_for_attribute(attr, target_col)
             if acc_attr > best_acc_local:
                 best_acc_local = acc_attr

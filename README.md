@@ -30,7 +30,7 @@ Project_A/
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
-pip install fastapi uvicorn jinja2 pandas tqdm psycopg2
+pip install fastapi uvicorn jinja2 pandas psycopg2
 ```
 
 2. With `uv`:

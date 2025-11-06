@@ -50,7 +50,7 @@ CREATE TYPE lenses_type AS ENUM ('hard', 'soft', 'none');
 CREATE TYPE age_group_type AS ENUM ('young', 'pre-presbyopic', 'presbyopic');
 CREATE TYPE disease_type AS ENUM ('myope', 'hypermetrope', 'astigmatic');
 
-REATE TABLE PATIENT (
+CREATE TABLE PATIENT (
     patient_id SERIAL PRIMARY KEY,
     name VARCHAR(50),
     birth_date DATE,

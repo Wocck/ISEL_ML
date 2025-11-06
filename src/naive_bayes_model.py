@@ -1,5 +1,4 @@
 import pandas as pd
-import math
 
 from evaluation import evaluate_on_test
 class NaiveBayesClassifier:
@@ -12,23 +11,13 @@ class NaiveBayesClassifier:
         self.df = None
 
     def set_training_data(self, df: pd.DataFrame):
-        self.df = df.copy()
-
-    @staticmethod
-    def _normalize_df(df: pd.DataFrame, target_col: str) -> pd.DataFrame:
-        # norm everything as string
-        df = df.copy()
-        for c in df.columns:
-            df[c] = df[c].astype(str).str.strip()
-        if target_col not in df.columns:
-            raise ValueError(f"Column of class '{target_col}' does not exist in data.")
-        return df
+        # simple normalization
+        self.df = df.astype(str).apply(lambda col: col.str.strip())
 
     def fit(self, target_col: str):
         if self.df is None:
             raise RuntimeError("Model has no data loaded. Use set_training_data() first!")
         
-        self.df = self._normalize_df(self.df, target_col)
         self.target_col = target_col
 
         # Default class = most common label
@@ -37,18 +26,19 @@ class NaiveBayesClassifier:
         classes = self.df[target_col].unique().tolist()
         attrs = [c for c in self.df.columns if c != target_col]
 
-        # prior P(class)
+        # Prior probability P(class) estimated as relative frequency in training data
         total = len(self.df)
         for c in classes:
             count_c = len(self.df[self.df[target_col] == c])
             self.class_priors[c] = count_c / total
 
-        # conditional P(attr=value | class) - Laplace smoothing
-        # structure: cond_probs[attr][value][class] = probability
+        # Conditional probability P(attribute = value | class)
+        # Estimated with Laplace smoothing to avoid zero probabilities:
+        # (count + 1) / (class_count + number_of_possible_values)
         self.cond_probs = {attr: {} for attr in attrs}
 
         for attr in attrs:
-            # all values for given attribute
+            # All values for given attribute
             all_values = self.df[attr].unique().tolist()
 
             for v in all_values:
@@ -76,27 +66,27 @@ class NaiveBayesClassifier:
         self.fitted = True
 
     def _predict_single_rowdict(self, row: dict) -> str:
-        # Calculate log(P(class)) + sum(log(P(attr=value|class)))
+        # Compute P(class) * Π P(attr=value | class)
         if not self.fitted:
             raise RuntimeError("Model Naive Bayes was not trained. Use fit() first!")
 
         best_class = None
         best_score = None
 
-        for c in self.class_priors.keys():
-            score = math.log(self.class_priors[c] + 1e-12)
+        for c in self.class_priors:
+            score = self.class_priors[c]
 
             for attr, val in row.items():
                 if attr == self.target_col:
                     continue
-                
+                # Use conditional probability if known, otherwise fallback
                 if val in self.cond_probs[attr]:
                     prob_val = self.cond_probs[attr][val][c]
                 else:
                     prob_val = self.cond_probs[attr]["__UNK__"][c]
-
-                score += math.log(prob_val + 1e-12)
-
+                # Multiply probabilities
+                score *= prob_val
+            # Keep the class with the highest probability score
             if best_score is None or score > best_score:
                 best_score = score
                 best_class = c
@@ -106,12 +96,8 @@ class NaiveBayesClassifier:
     def predict_row(self, row):
         if not self.fitted:
             raise RuntimeError("Model Naive Bayes was not trained. Use fit() first!")
-        rowdict = {
-            "age_group": str(row["age_group"]).strip(),
-            "disease_name": str(row["disease_name"]).strip(),
-            "astigmatic": str(row["astigmatic"]).strip(),
-            "tear_rate": str(row["tear_rate"]).strip(),
-        }
+        # Normalize input row to match training data formatting
+        rowdict = {k: str(v).strip() for k, v in row.items()}
         return self._predict_single_rowdict(rowdict)
 
 
@@ -127,12 +113,7 @@ class NaiveBayesClassifier:
         total = len(self.df)
 
         for i in range(total):
-            row = {
-                "age_group": str(self.df.iloc[i]["age_group"]).strip(),
-                "disease_name": str(self.df.iloc[i]["disease_name"]).strip(),
-                "astigmatic": str(self.df.iloc[i]["astigmatic"]).strip(),
-                "tear_rate": str(self.df.iloc[i]["tear_rate"]).strip()
-            }
+            row = {k: str(self.df.iloc[i][k]).strip() for k in self.df.columns if k != self.target_col}
             pred = self._predict_single_rowdict(row)
             real = str(self.df.iloc[i][self.target_col]).strip()
             if pred == real:

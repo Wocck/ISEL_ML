@@ -280,3 +280,20 @@ To summarize:
 - Naive Bayes performs well, but not better than ID3.  
 
 In practical use, if we want the most accurate predictions and a clear explanation of decisions, ID3 is the best choice. If we prefer a very simple model that is easy to explain, 1R is a good option.  
+
+## Bibliography
+
+### OneRule
+- [geeksforgeeks](https://www.geeksforgeeks.org/machine-learning/learn-one-rule-algorithm/?utm_source=chatgpt.com)
+- [saedsayad](https://www.saedsayad.com/oner.htm)
+
+### ID3
+- [geeksforgeeks](https://www.geeksforgeeks.org/machine-learning/iterative-dichotomiser-3-id3-algorithm-from-scratch/)
+- [youtube 1](https://www.youtube.com/watch?v=_oYCYATalOE)
+- [youtube 2](https://www.youtube.com/watch?v=ZVR2Way4nwQ)
+- [wikipedia](https://en.wikipedia.org/wiki/ID3_algorithm)
+
+### Naive Bayes
+- [geeksforgeeks](https://www.geeksforgeeks.org/machine-learning/naive-bayes-scratch-implementation-using-python)
+- [wikipedia](https://pl.wikipedia.org/wiki/Naiwny_klasyfikator_bayesowski)
+- [youtube](https://www.youtube.com/watch?v=SPo0qAqL5ew)

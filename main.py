@@ -1,14 +1,14 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from dataset import insert_data, orange_export_to_csv, export_to_csv
-from evaluation import summarize_cv
-from database_manager import DatabaseManager
+from src.dataset import insert_data, orange_export_to_csv, export_to_csv
+from src.evaluation import summarize_cv
+from src.database_manager import DatabaseManager
 
-from r1_model import OneRClassifier
-from id3_model import ID3Classifier
-from naive_bayes_model import NaiveBayesClassifier
-from config import (
+from src.r1_model import OneRClassifier
+from src.id3_model import ID3Classifier
+from src.naive_bayes_model import NaiveBayesClassifier
+from src.config import (
     DB_CONFIG,
     DATASET_SIZE,
     ORANGE_OUTPUT_FILE,

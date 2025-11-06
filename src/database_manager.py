@@ -1,7 +1,9 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
-from models import DatabaseConfig
+from psycopg2 import OperationalError, InterfaceError, DatabaseError, ProgrammingError, IntegrityError
+
+from src.models import DatabaseConfig
 
 class DatabaseManager:
     def __init__(self, config: DatabaseConfig):
@@ -12,14 +14,17 @@ class DatabaseManager:
         print("[OK] Database connected")
 
     def connect(self):
-        self.conn = psycopg2.connect(
-            dbname=self.config.db_name,
-            user=self.config.db_user,
-            password=self.config.db_pass,
-            host=self.config.db_host,
-            port=self.config.db_port
-        )
-        self.cur = self.conn.cursor(cursor_factory=RealDictCursor)
+        try:
+            self.conn = psycopg2.connect(
+                dbname=self.config.db_name,
+                user=self.config.db_user,
+                password=self.config.db_pass,
+                host=self.config.db_host,
+                port=self.config.db_port
+            )
+            self.cur = self.conn.cursor(cursor_factory=RealDictCursor)
+        except Exception as e:
+            print(self._human_message_from_exception(e))
 
     def close(self):
         if self.cur:
@@ -42,7 +47,10 @@ class DatabaseManager:
         if not self.conn:
             print("Database connection is not initialized. Call connect() first.")
             return
-        self.cur.execute(query, params)
+        try:
+            self.cur.execute(query, params)
+        except Exception as e:
+            print(self._human_message_from_exception(e))
         if commit:
             self.conn.commit()
 
@@ -50,14 +58,20 @@ class DatabaseManager:
         if not self.cur:
             print("Database cursor is not initialized. Call connect() first.")
             return
-        self.cur.execute(query, params)
+        try:
+            self.cur.execute(query, params)
+        except Exception as e:
+            print(self._human_message_from_exception(e))
         return self.cur.fetchall()
 
     def fetch_one(self, query: str, params=None):
         if not self.cur:
             print("Database cursor is not initialized. Call connect() first.")
             return
-        self.cur.execute(query, params)
+        try:
+            self.cur.execute(query, params)
+        except Exception as e:
+            print(self._human_message_from_exception(e))
         return self.cur.fetchone()
 
     def get_patients(self):
@@ -89,10 +103,13 @@ class DatabaseManager:
         self.execute("DELETE FROM examination;", commit=True)
 
     def insert_examination_record(self, exam_date, astig, tear, lens, patient, doctor, disease_id):
-        self.execute("""
-            INSERT INTO examination (exam_date, astigmatic, tear_rate, lenses, patient_id, doctor_id, disease_id)
-            VALUES (%s, %s, %s, %s, %s, %s, %s);
-        """, (exam_date, astig, tear, lens, patient, doctor, disease_id))
+        try:
+            self.execute("""
+                INSERT INTO examination (exam_date, astigmatic, tear_rate, lenses, patient_id, doctor_id, disease_id)
+                VALUES (%s, %s, %s, %s, %s, %s, %s);
+            """, (exam_date, astig, tear, lens, patient, doctor, disease_id))
+        except Exception as e:
+            print(self._human_message_from_exception(e))
 
     def refresh_views(self, sql_file_path):
         with open(sql_file_path, "r", encoding="utf-8") as f:
@@ -101,3 +118,24 @@ class DatabaseManager:
 
     def get_dataset_rows(self, dataset_table: str):
         return self.fetch_all(f"SELECT * FROM {dataset_table};")
+    
+    def _human_message_from_exception(self, exc: Exception) -> str:
+        if isinstance(exc, OperationalError):
+            msg = str(exc).strip()
+            if "authentication failed" in msg.lower() or "password authentication failed" in msg.lower() or "28p01" in msg.lower():
+                return "Authentication failed: check username/password or acces rights to database."
+            if "could not connect to server" in msg.lower() or "connection refused" in msg.lower():
+                return "Cannot connect to database server (host/port)."
+            if "timeout expired" in msg.lower() or "timeout" in msg.lower():
+                return "Connection Timeout."
+            return f"OperationalError: {msg}"
+        elif isinstance(exc, InterfaceError):
+            return f"Database interface error: {str(exc)}"
+        elif isinstance(exc, IntegrityError):
+            return f"Constraint violation. details: {str(exc)}"
+        elif isinstance(exc, ProgrammingError):
+            return f"SQL query error: {str(exc)}"
+        elif isinstance(exc, DatabaseError):
+            return f"Database error: {str(exc)}"
+        else:
+            return str(exc)

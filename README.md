@@ -92,9 +92,10 @@ This will:
 - Train and evaluate all models (1R, ID3, Naive Bayes)  
 - Print rules / tree structure and accuracy results  
 
+From project main directory:
 ```bash
 .venv\Scripts\activate
-python scripts/main.py
+python main.py
 ```
 
 ### 3. Models Deployment
@@ -103,10 +104,10 @@ This will:
 - Launch a simple web interface for testing model predictions  
 - Allow entering patient attributes and selecting classifier  
 
-
+From project main directory:
 ```bash
 .venv\Scripts\activate
-uvicorn webapp.app:app --reload
+python -m uvicorn webapp.app:app --reload
 ```
 
 Webapp will be available under ` http://127.0.0.1:8000`

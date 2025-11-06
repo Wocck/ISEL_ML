@@ -19,8 +19,8 @@ from datetime import date, timedelta
 from pathlib import Path
 
 
-from models import Disease, TearRate, LensType
-from database_manager import DatabaseManager
+from src.models import Disease, TearRate, LensType
+from src.database_manager import DatabaseManager
 
 
 

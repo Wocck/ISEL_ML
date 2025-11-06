@@ -14,9 +14,9 @@ def evaluate_on_test(model, test_df, target_col):
     return correct / len(real)
 
 def summarize_cv(df, target_col="lenses", k=5):
-    from r1_model import OneRClassifier
-    from id3_model import ID3Classifier
-    from naive_bayes_model import NaiveBayesClassifier
+    from src.r1_model import OneRClassifier
+    from src.id3_model import ID3Classifier
+    from src.naive_bayes_model import NaiveBayesClassifier
     
     print("\n===============================")
     print(f" {k}-Fold Cross Validation Summary")

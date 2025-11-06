@@ -1,6 +1,5 @@
 import pandas as pd
 
-from evaluation import evaluate_on_test
 class NaiveBayesClassifier:
     def __init__(self):
         self.target_col = None
@@ -129,4 +128,5 @@ class NaiveBayesClassifier:
         print("===============================")
         print("Accuracy:")
         print(f"  Train: {self.score()*100:.2f}%")
+        from src.evaluation import evaluate_on_test
         print(f"  Test:  {evaluate_on_test(self, test_df, 'lenses')*100:.2f}%")

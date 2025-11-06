@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from models import DatabaseConfig
+from src.models import DatabaseConfig
 
 # Database connection config
 DB_CONFIG = DatabaseConfig(

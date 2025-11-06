@@ -155,5 +155,5 @@ class ID3Classifier:
         print("\nAccuracy:")
         print(f"  Train: {self.score()*100:.2f}%")
 
-        from evaluation import evaluate_on_test
+        from src.evaluation import evaluate_on_test
         print(f"  Test:  {evaluate_on_test(self, test_df, self.target_col)*100:.2f}%")

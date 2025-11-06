@@ -22,7 +22,7 @@ Project_A/
 ├── graphics/                  # ER diagram + database diagram
 ├── scripts/                   # Python implementation of models + main runner
 │   ├── config.py              # Path, Database, execution parameters configuration
-│   ├── main.py                # Generates data, trains and evaluates models
+│   ├── main.py                # Generates and exports data, trains and evaluates models
 │   ├── r1_model.py            # One Rule classifier
 │   ├── id3_model.py           # ID3 Decision Tree classifier
 │   ├── naive_bayes_model.py   # Naive Bayes classifier
@@ -30,10 +30,12 @@ Project_A/
 │   ├── evaluation.py          # Test accuracy + cross-validation utilities
 │   └── database_manager.py    # Database connector
 ├── sql/                       # Schema creation & dataset export queries
-└── webapp/                    # FastAPI UI for predictions
-    ├── app.py
-    └── templates/index.html
-
+├── webapp/                    # FastAPI UI for predictions
+│   ├── app.py                 # FastAPI application Code
+│   └── templates/index.html   # HTML website with some CSS styling
+├── requirements.txt           # project requirements for pip
+├── run_app.bat                # Windows script for running Web Application 
+└── run_main.bat               # Windows script for running Main.py program 
 ```
 
 ## Requirements

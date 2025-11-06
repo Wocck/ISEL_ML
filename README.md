@@ -92,7 +92,7 @@ This will:
 - Train and evaluate all models (1R, ID3, Naive Bayes)  
 - Print rules / tree structure and accuracy results  
 
-From project main directory:
+Run `./run_main.bat` script from powershell terminal or:
 ```bash
 .venv\Scripts\activate
 python main.py
@@ -104,7 +104,7 @@ This will:
 - Launch a simple web interface for testing model predictions  
 - Allow entering patient attributes and selecting classifier  
 
-From project main directory:
+Run `./run_app.bat` script from powershell terminal or:
 ```bash
 .venv\Scripts\activate
 python -m uvicorn webapp.app:app --reload

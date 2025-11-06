@@ -1,16 +1,19 @@
 import psycopg2
+from pathlib import Path
 from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
 from psycopg2 import OperationalError, InterfaceError, DatabaseError, ProgrammingError, IntegrityError
 
 from src.models import DatabaseConfig
-
+from src.config import DROP_CREATE_TABLES, INITIAL_POPULATE_DATABASE
 class DatabaseManager:
     def __init__(self, config: DatabaseConfig):
         self.config = config
         self.conn = None
         self.cur = None
         self.connect()
+        self.execute_sql_file(DROP_CREATE_TABLES)
+        self.execute_sql_file(INITIAL_POPULATE_DATABASE)
         print("[OK] Database connected")
 
     def connect(self):
@@ -31,6 +34,14 @@ class DatabaseManager:
             self.cur.close()
         if self.conn:
             self.conn.close()
+
+    def execute_sql_file(self, sql_path: Path):
+        try:
+            with open(sql_path, "r", encoding="utf-8") as f:
+                sql_commands = f.read()
+                self.execute(sql_commands, commit=True)
+        except Exception as e:
+            print(self._human_message_from_exception(e))
 
     @contextmanager
     def session(self):
@@ -111,11 +122,6 @@ class DatabaseManager:
         except Exception as e:
             print(self._human_message_from_exception(e))
 
-    def refresh_views(self, sql_file_path):
-        with open(sql_file_path, "r", encoding="utf-8") as f:
-            sql_commands = f.read()
-            self.execute(sql_commands, commit=True)
-
     def get_dataset_rows(self, dataset_table: str):
         return self.fetch_all(f"SELECT * FROM {dataset_table};")
     
@@ -139,3 +145,4 @@ class DatabaseManager:
             return f"Database error: {str(exc)}"
         else:
             return str(exc)
+

@@ -25,3 +25,7 @@ TAB_DATASET_FILE = BASE_DIR / "data" / "dataset.tab"
 MODELS_SQL_CREATE_DATASET_VIEW = BASE_DIR / "sql" / "export_models.sql"
 # Name of the view in database
 MODELS_DATASET_TABLE = "models_dataset"
+# Drop create database tables and types query
+DROP_CREATE_TABLES = BASE_DIR / "sql" / "create_tables.sql"
+# Initial populate of tables in database
+INITIAL_POPULATE_DATABASE = BASE_DIR / "sql" / "populate_tables.sql"

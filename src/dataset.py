@@ -81,7 +81,7 @@ def insert_data(db: DatabaseManager, records_num: int, delete_before_insert: boo
 def orange_export_to_csv(db: DatabaseManager, output_file: Path, sql_create_view_query: Path, dataset_table: str):
     try:
         print("[INFO] Updating database views before data export")
-        db.refresh_views(sql_create_view_query)
+        db.execute_sql_file(sql_create_view_query)
         print("[OK] Views refreshed successfully.")
         
         rows = db.get_dataset_rows(dataset_table)
@@ -100,7 +100,7 @@ def orange_export_to_csv(db: DatabaseManager, output_file: Path, sql_create_view
         print(e)
 
 def export_to_csv(db: DatabaseManager, sql_create_view_query: Path, dataset_table: str, output_file: Path) -> Path:
-    db.refresh_views(sql_create_view_query)
+    db.execute_sql_file(sql_create_view_query)
     rows = db.get_dataset_rows(dataset_table)
 
     if not rows:

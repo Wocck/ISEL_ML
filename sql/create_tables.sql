@@ -1,3 +1,14 @@
+-- DROP existing tables and types (safe order: tables first, then types)
+DROP TABLE IF EXISTS examination CASCADE;
+DROP TABLE IF EXISTS disease CASCADE;
+DROP TABLE IF EXISTS doctor CASCADE;
+DROP TABLE IF EXISTS patient CASCADE;
+
+DROP TYPE IF EXISTS tear_rate_type CASCADE;
+DROP TYPE IF EXISTS lenses_type CASCADE;
+DROP TYPE IF EXISTS age_group_type CASCADE;
+DROP TYPE IF EXISTS disease_type CASCADE;
+
 -- ==========================
 -- ENUM type definitions
 -- ==========================

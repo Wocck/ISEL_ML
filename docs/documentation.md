@@ -297,3 +297,6 @@ In practical use, if we want the most accurate predictions and a clear explanati
 - [geeksforgeeks](https://www.geeksforgeeks.org/machine-learning/naive-bayes-scratch-implementation-using-python)
 - [wikipedia](https://pl.wikipedia.org/wiki/Naiwny_klasyfikator_bayesowski)
 - [youtube](https://www.youtube.com/watch?v=SPo0qAqL5ew)
+
+### ChatGPT Help
+- [chatgpt](https://chatgpt.com/share/690d053b-2200-8007-991e-33b2a03141bc)

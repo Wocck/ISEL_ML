@@ -110,4 +110,5 @@ From project main directory:
 python -m uvicorn webapp.app:app --reload
 ```
 
-Webapp will be available under ` http://127.0.0.1:8000`
+Webapp will be available under ` http://127.0.0.1:8000`  
+**Important** First run `main.py` program so that it will create and extract examination data and save it to `.tsv` file.
